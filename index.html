@@ -358,6 +358,7 @@
     }
 
     .muestra-musical {
+      display: inline-block;
       margin-top: 1.25rem;
       width: 100%;
       background: transparent;
@@ -368,11 +369,12 @@
       font: inherit;
       font-size: 0.8rem;
       cursor: pointer;
+      text-align: center;
       transition: background-color var(--transicion-suave), color var(--transicion-suave);
     }
 
     .muestra-musical:hover,
-    .muestra-musical[aria-pressed="true"] {
+    .muestra-musical:focus-visible {
       background: var(--color-acento);
       color: var(--color-fondo);
     }
@@ -526,49 +528,49 @@
     <!-- SECCIÓN 4: Grandes Éxitos y Colaboraciones -->
     <section id="exitos" class="section" aria-labelledby="exitos-titulo">
       <h2 id="exitos-titulo">Grandes éxitos y colaboraciones</h2>
-      <p class="nota-audio">Escucha una muestra instrumental original de 12 segundos inspirada en cada título. No son grabaciones de las canciones ni utilizan audio protegido.</p>
+      <p class="nota-audio">Escucha la grabación real desde una búsqueda oficial en YouTube. La reproducción y los derechos corresponden a la plataforma y a sus titulares.</p>
 
       <ul class="grid-exitos" role="list">
         <li class="tarjeta-exito">
           <article>
             <h3>No Basta</h3>
             <p>Su himno más icónico, número 1 en Billboard en 1991.</p>
-            <button class="muestra-musical" type="button" data-muestra="no-basta" aria-pressed="false">▶ Escuchar muestra</button>
+            <a class="muestra-musical" href="https://www.youtube.com/results?search_query=Franco+de+Vita+No+Basta+official" target="_blank" rel="noopener noreferrer">▶ Escuchar fragmento oficial</a>
           </article>
         </li>
         <li class="tarjeta-exito">
           <article>
             <h3>Te Amo</h3>
             <p>Una de las baladas que definió su salto a la fama internacional.</p>
-            <button class="muestra-musical" type="button" data-muestra="te-amo" aria-pressed="false">▶ Escuchar muestra</button>
+            <a class="muestra-musical" href="https://www.youtube.com/results?search_query=Franco+de+Vita+Te+Amo+official" target="_blank" rel="noopener noreferrer">▶ Escuchar fragmento oficial</a>
           </article>
         </li>
         <li class="tarjeta-exito">
           <article>
             <h3>Tú de qué vas</h3>
             <p>Tema representativo de su versatilidad como compositor.</p>
-            <button class="muestra-musical" type="button" data-muestra="tu-de-que-vas" aria-pressed="false">▶ Escuchar muestra</button>
+            <a class="muestra-musical" href="https://www.youtube.com/results?search_query=Franco+de+Vita+Tu+de+que+vas+official" target="_blank" rel="noopener noreferrer">▶ Escuchar fragmento oficial</a>
           </article>
         </li>
         <li class="tarjeta-exito">
           <article>
             <h3>Cálido y Frío</h3>
             <p>Una muestra de la profundidad lírica que caracteriza su obra.</p>
-            <button class="muestra-musical" type="button" data-muestra="calido-y-frio" aria-pressed="false">▶ Escuchar muestra</button>
+            <a class="muestra-musical" href="https://www.youtube.com/results?search_query=Franco+de+Vita+Calido+y+Frio+official" target="_blank" rel="noopener noreferrer">▶ Escuchar fragmento oficial</a>
           </article>
         </li>
         <li class="tarjeta-exito">
           <article>
             <h3>Vuelve (con Ricky Martin)</h3>
             <p>Composición escrita para Ricky Martin, éxito rotundo a nivel mundial.</p>
-            <button class="muestra-musical" type="button" data-muestra="vuelve" aria-pressed="false">▶ Escuchar muestra</button>
+            <a class="muestra-musical" href="https://www.youtube.com/results?search_query=Franco+de+Vita+Vuelve+Ricky+Martin+official" target="_blank" rel="noopener noreferrer">▶ Escuchar fragmento oficial</a>
           </article>
         </li>
         <li class="tarjeta-exito">
           <article>
             <h3>En Primera Fila</h3>
             <p>Serie de álbumes en vivo aclamados por la crítica y el público.</p>
-            <button class="muestra-musical" type="button" data-muestra="en-primera-fila" aria-pressed="false">▶ Escuchar muestra</button>
+            <a class="muestra-musical" href="https://www.youtube.com/results?search_query=Franco+de+Vita+En+Primera+Fila+official" target="_blank" rel="noopener noreferrer">▶ Escuchar fragmento oficial</a>
           </article>
         </li>
       </ul>
@@ -607,69 +609,6 @@
     </nav>
   </footer>
 
-  <script>
-    const botonesMuestra = document.querySelectorAll('.muestra-musical');
-    let contextoAudio;
-    let osciladoresActivos = [];
-    let temporizadorMuestra;
-    let botonActivo;
-
-    const muestras = {
-      'no-basta': { notas: [261.63, 329.63, 392, 523.25], forma: 'sine' },
-      'te-amo': { notas: [220, 277.18, 329.63, 440], forma: 'triangle' },
-      'tu-de-que-vas': { notas: [293.66, 369.99, 440, 587.33], forma: 'sine' },
-      'calido-y-frio': { notas: [196, 246.94, 293.66, 392], forma: 'triangle' },
-      vuelve: { notas: [246.94, 311.13, 369.99, 493.88], forma: 'sine' },
-      'en-primera-fila': { notas: [174.61, 220, 261.63, 349.23], forma: 'triangle' }
-    };
-
-    function detenerMuestra() {
-      window.clearTimeout(temporizadorMuestra);
-      osciladoresActivos.forEach((oscilador) => oscilador.stop());
-      osciladoresActivos = [];
-      if (botonActivo) {
-        botonActivo.textContent = '▶ Escuchar muestra';
-        botonActivo.setAttribute('aria-pressed', 'false');
-        botonActivo = null;
-      }
-    }
-
-    function reproducirMuestra(boton) {
-      const muestra = muestras[boton.dataset.muestra];
-      if (boton === botonActivo) {
-        detenerMuestra();
-        return;
-      }
-
-      detenerMuestra();
-      contextoAudio = contextoAudio || new AudioContext();
-      contextoAudio.resume();
-      const inicio = contextoAudio.currentTime;
-      const duracion = 12;
-
-      muestra.notas.forEach((frecuencia, indice) => {
-        const oscilador = contextoAudio.createOscillator();
-        const ganancia = contextoAudio.createGain();
-        oscilador.type = muestra.forma;
-        oscilador.frequency.value = frecuencia;
-        ganancia.gain.setValueAtTime(0.0001, inicio);
-        ganancia.gain.exponentialRampToValueAtTime(0.08, inicio + 0.35);
-        ganancia.gain.setValueAtTime(0.08, inicio + duracion - 1);
-        ganancia.gain.exponentialRampToValueAtTime(0.0001, inicio + duracion);
-        oscilador.connect(ganancia).connect(contextoAudio.destination);
-        oscilador.start(inicio + indice * 0.18);
-        oscilador.stop(inicio + duracion);
-        osciladoresActivos.push(oscilador);
-      });
-
-      botonActivo = boton;
-      boton.textContent = '■ Detener muestra';
-      boton.setAttribute('aria-pressed', 'true');
-      temporizadorMuestra = window.setTimeout(detenerMuestra, duracion * 1000);
-    }
-
-    botonesMuestra.forEach((boton) => boton.addEventListener('click', () => reproducirMuestra(boton)));
-  </script>
 
 </body>
 </html>
